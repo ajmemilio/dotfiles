@@ -1,0 +1,103 @@
+"------------------------------------------------------------------------------
+" Plugins
+"------------------------------------------------------------------------------
+" Initialize plugin system
+call plug#begin('~/.vim/plugged')
+" Git commands
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+"Plug 'APZelos/blamer.nvim'
+" Code completion
+Plug 'neoclide/coc.nvim'
+" Defx folder plugins
+Plug 'kristijanhusak/defx-icons'
+Plug 'kristijanhusak/defx-git'
+" Auto pairs
+Plug 'jiangmiao/auto-pairs'
+" Info bar
+Plug 'itchyny/lightline.vim'
+" Nice icons
+Plug 'ryanoasis/vim-devicons'
+" Buffer explorer
+Plug 'jlanzarotta/bufexplorer'
+" Best theme in the world
+Plug 'morhetz/gruvbox'
+" Fuzzy finder with preview
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'airblade/vim-rooter'
+" Auto comment lines or blocks of code
+Plug 'preservim/nerdcommenter'
+" Git changes integration
+Plug 'mhinz/vim-signify'
+" Multiple cursor selection
+Plug 'terryma/vim-multiple-cursors'
+" Debbuger
+Plug 'puremourning/vimspector'
+" Maximizer
+Plug 'szw/vim-maximizer'
+" Navigation folder
+if has('nvim')
+    Plug 'Shougo/defx.nvim', {'do': ':UpdateRemotePlugins'}
+else
+    Plug 'Shougo/defx.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+    " Focus events
+    Plug 'tmux-plugins/vim-tmux-focus-events'
+endif
+
+" Initialize lazy plugin
+Plug 'elzr/vim-json', {'for': 'json'}
+Plug 'cespare/vim-toml', {'for': 'toml'}
+Plug 'kchmck/vim-coffee-script', {'for': 'coffee'}
+Plug 'dag/vim-fish', {'for': 'fish'}
+Plug 'StanAngeloff/php.vim', {'for': 'php'}
+Plug 'stephpy/vim-yaml', {'for': 'yaml'}
+Plug 'groenewege/vim-less', {'for': 'less'}
+Plug 'yuezk/vim-js', {'for': ['javascript', 'javascript.jsx']}
+Plug 'maxmellon/vim-jsx-pretty', {'for': ['javascript', 'javascript.jsx']}
+Plug 'ianks/vim-tsx', {'for': ['javascript', 'javascript.jsx']}
+call plug#end()
+
+"------------------------------------------------------------------------------
+" Plugin Configuration
+"------------------------------------------------------------------------------
+" vim-json
+let g:vim_json_syntax_conceal = 0
+
+" status line
+"if !exists('*fugitive#statusline')
+set statusline=%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}[L%l/%L,C%03v]
+set statusline+=%=
+set statusline+=%{fugitive#statusline()}
+"set statusline+=%{FugitiveStatusline()}
+"endif
+
+" git blame
+"let g:blamer_enabled = 0
+"let g:blamer_delay = 500
+"let g:blamer_show_in_insert_modes = 0
+
+" jsx 
+let g:jsx_ext_required = 0
+
+" tern
+" disable auto preview window
+set completeopt-=preview
+
+" devicons
+set guifont=Sauce\ Code\ Pro\ Light\ Nerd\ Font\ Complete\ Windows\ Compatible:h11
+let g:webdevicons_enable_vimfiler = 1
+
+" fzf
+nmap <C-p> :Files<Return>
+nmap ;r :Rg<Return>
+
+filetype plugin on
+
+" gruvbox contrast
+let g:gruvbox_contrast_dark = "hard"
+
+source ~/.config/nvim/plugins/coc.rc.vim
+source ~/.config/nvim/plugins/defx.rc.vim
