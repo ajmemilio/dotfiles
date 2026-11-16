@@ -1,6 +1,6 @@
 ---
 name: python-code-review
-description: Review Python changes on a git branch or working tree (git diff vs main, staged/unstaged edits, a feature branch before opening a PR) and return a short, prioritized list of findings — Blocker / Should-fix / Nit — each with file:line and a concrete fix. Covers correctness, ML/MLOps pitfalls (data leakage, train/serve skew, reproducibility, non-idempotent pipelines, model/feature versioning), security and PII handling, and style/tests/performance, and runs ruff, mypy and pytest when the repo has them. Use this whenever someone asks to review, check, sanity-check, or "take a look at" their Python changes, diff, branch, or commit, asks whether code is ready to merge or open a PR, or asks "what did I break" — even if they don't say "code review".
+description: Review Python changes on a git branch or working tree (git diff vs main, staged/unstaged edits, a feature branch before opening a PR) and return a short, prioritized list of findings — Blocker / Should-fix / Nit — each with file:line and a concrete fix. Covers correctness, ML/MLOps pitfalls (data leakage, train/serve skew, reproducibility, non-idempotent pipelines, model/feature versioning), security and PII handling, and style/tests/performance, and runs ruff, ty and pytest when the repo has them. Use this whenever someone asks to review, check, sanity-check, or "take a look at" their Python changes, diff, branch, or commit, asks whether code is ready to merge or open a PR, or asks "what did I break" — even if they don't say "code review".
 ---
 
 # Python code review
@@ -27,8 +27,9 @@ Then read the full diff (`git diff <base>...HEAD -- <files>`), and open the surr
 
 ## 2. Run the tooling that exists
 
-Run `scripts/run_checks.sh <base>` from this skill's directory (pass the repo root as the working directory). It detects which of ruff, mypy and pytest the project uses (via `pyproject.toml`, `setup.cfg`, `ruff.toml`, `mypy.ini`, `tests/`), runs them on the changed files where that makes sense, and prints a compact summary. It never installs anything.
+Run `scripts/run_checks.sh <base>` from this skill's directory (pass the repo root as the working directory). It detects which of ruff, ty and pytest the project uses (via `pyproject.toml`, `setup.cfg`, `ruff.toml`, `ty.toml`, `tests/`), runs them on the changed files where that makes sense, and prints a compact summary. It never installs anything.
 
+- If the repo has no ruff config of its own, the script falls back to this skill's default config at `references/ruff.toml` (line-length 120, numpy docstring convention, broad rule selection — see that file for the exact rule set) so ruff still runs with our standard rules.
 - Report only tool findings on **changed lines** (or newly failing tests). Pre-existing lint noise is not this author's problem; mention it in one line at most.
 - If a tool isn't configured or installed, skip it and note that in the Checks line. Don't invent config.
 - If tests take long or need infra (DB, cloud creds), the script times out on them — report "pytest: skipped (timeout/needs infra)" and move on.
@@ -58,7 +59,7 @@ Keep it tight. Use exactly this shape:
 ## Review: <branch> vs <base> — <N files, +X/−Y>
 
 **Verdict:** <Ready to merge | Merge after fixes | Needs rework> — <one sentence why>
-**Checks:** ruff ✅ | mypy ⚠️ 2 new errors | pytest ✅ 48 passed   (or "not configured")
+**Checks:** ruff ✅ | ty ⚠️ 2 new errors | pytest ✅ 48 passed   (or "not configured")
 
 ### Blockers
 1. `path/file.py:42` — <what's wrong and the consequence>. **Fix:** <concrete change, code if short>

@@ -58,4 +58,4 @@ Use as a prompt for what to look for, not a form to fill in. Skip what doesn't a
 - Misleading names; functions doing several unrelated things
 - Dead code, commented-out blocks, leftover debug prints
 - Magic numbers that should be config
-- Public functions with non-obvious behavior and no docstring
+- Public functions with non-obvious behavior and no docstring, or a docstring that doesn't follow [numpydoc style](https://numpydoc.readthedocs.io/en/latest/format.html) (`Parameters`/`Returns`/`Raises` sections, not Google/Sphinx style) — ruff's `D` rules with the numpy convention catch most of this
