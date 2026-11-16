@@ -12,6 +12,7 @@ MAX_NAME, MAX_DESC, MAX_LINES = 64, 1024, 500
 
 
 def frontmatter(text: str) -> dict[str, str] | None:
+    text = text.replace("\r\n", "\n")
     m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
     if not m:
         return None
@@ -53,6 +54,10 @@ def check(skill_dir: Path) -> list[str]:
 
 def main(argv: list[str]) -> int:
     roots = [Path(a) for a in argv] or [Path(__file__).resolve().parent.parent / "skills"]
+    for r in roots:
+        if not r.is_dir():
+            print(f"error: not a directory: {r}", file=sys.stderr)
+            return 2
     dirs = sorted(d for r in roots for d in r.iterdir() if d.is_dir() and not d.name.startswith("_"))
     failed = 0
     for d in dirs:
