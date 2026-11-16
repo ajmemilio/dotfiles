@@ -51,7 +51,6 @@ endif
 Plug 'elzr/vim-json', {'for': 'json'}
 Plug 'cespare/vim-toml', {'for': 'toml'}
 Plug 'kchmck/vim-coffee-script', {'for': 'coffee'}
-Plug 'dag/vim-fish', {'for': 'fish'}
 Plug 'StanAngeloff/php.vim', {'for': 'php'}
 Plug 'stephpy/vim-yaml', {'for': 'yaml'}
 Plug 'groenewege/vim-less', {'for': 'less'}
