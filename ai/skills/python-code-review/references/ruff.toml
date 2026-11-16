@@ -1,0 +1,21 @@
+line-length = 120
+src = ["src", "tests"]
+extend-exclude = [".venv*", "*.ipynb"]
+
+[lint]
+select = [
+  "D", "E", "F", "I", "W", "UP01", "UP02", "UP034", "UP04", "B03", "B9", "N81", "N9", "YTT",
+  "S2", "S3", "S5", "S7", "A003", "T10", "DJ", "EXE", "ISC", "ICN", "LOG", "PIE7", "PYI", "PT02",
+  "RSE", "SLOT", "SIM2", "SIM3", "SIM4", "SIM9", "TID", "TCH", "INT", "TD", "FIX", "PLC", "PLE",
+  "FLY", "AIR", "FURB", "RUF1", "RUF2",
+]
+ignore = [
+  "B905", "D1", "D205", "E731", "FIX00", "PLC0415", "S311", "TD002", "TD003", "TID252",
+]
+per-file-ignores = { "__init__.py" = ["F401", "F403"] }
+
+[lint.isort]
+known-first-party = ["inference_assembler"]
+
+[lint.pydocstyle]
+convention = "numpy"

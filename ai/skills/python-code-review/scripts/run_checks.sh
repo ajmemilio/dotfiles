@@ -39,22 +39,28 @@ has_cfg() { grep -qs "$1" pyproject.toml setup.cfg tox.ini 2>/dev/null; }
 have() { command -v "$1" >/dev/null 2>&1 || python -m "$1" --version >/dev/null 2>&1; }
 run() { if command -v "$1" >/dev/null 2>&1; then "$@"; else python -m "$@"; fi; }
 
-# ruff
+SKILL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# ruff — use the repo's own config if it has one, else fall back to this skill's house config
+RUFF_ARGS=()
 if [ -f ruff.toml ] || [ -f .ruff.toml ] || has_cfg '\[tool.ruff'; then
-  if have ruff; then
-    echo "== ruff (changed files)"
-    if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then run ruff check --output-format=concise "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
-  else echo "== ruff: configured but not installed"; fi
-else echo "== ruff: not configured"; fi
+  :
+else
+  RUFF_ARGS=(--config "$SKILL_ROOT/references/ruff.toml")
+fi
+if have ruff; then
+  echo "== ruff (changed files)${RUFF_ARGS:+, using the skill default config}"
+  if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then run ruff check --output-format=concise "${RUFF_ARGS[@]}" "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
+else echo "== ruff: not installed"; fi
 echo
 
-# mypy
-if [ -f mypy.ini ] || [ -f .mypy.ini ] || has_cfg '\[tool.mypy\]' || has_cfg '\[mypy'; then
-  if have mypy; then
-    echo "== mypy (changed files)"
-    if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then timeout 180 bash -c "$(declare -f run); run mypy \"\$@\"" run_mypy "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
-  else echo "== mypy: configured but not installed"; fi
-else echo "== mypy: not configured"; fi
+# ty
+if [ -f ty.toml ] || has_cfg '\[tool.ty\]'; then
+  if have ty; then
+    echo "== ty (changed files)"
+    if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then timeout 180 bash -c "$(declare -f run); run ty check \"\$@\"" run_ty "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
+  else echo "== ty: configured but not installed"; fi
+else echo "== ty: not configured"; fi
 echo
 
 # pytest
