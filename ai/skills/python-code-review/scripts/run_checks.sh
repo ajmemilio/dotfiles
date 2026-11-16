@@ -21,11 +21,12 @@ MB=""
   git ls-files --others --exclude-standard
 } 2>/dev/null | grep -E '\.py$' | sort -u > /tmp/_pcr_changed.txt
 
-CHANGED=$(cat /tmp/_pcr_changed.txt | while read -r f; do [ -f "$f" ] && echo "$f"; done)
+CHANGED_FILES=()
+while IFS= read -r f; do [ -f "$f" ] && CHANGED_FILES+=("$f"); done < /tmp/_pcr_changed.txt
 
 echo "== base: ${BASE:-<none>} merge-base: ${MB:-<none>}"
 echo "== changed python files:"
-echo "${CHANGED:-<none>}"
+if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then printf '%s\n' "${CHANGED_FILES[@]}"; else echo "<none>"; fi
 echo
 
 # macOS has no `timeout` by default; fall back to gtimeout (coreutils) or no timeout
@@ -42,7 +43,7 @@ run() { if command -v "$1" >/dev/null 2>&1; then "$@"; else python -m "$@"; fi; 
 if [ -f ruff.toml ] || [ -f .ruff.toml ] || has_cfg '\[tool.ruff'; then
   if have ruff; then
     echo "== ruff (changed files)"
-    if [ -n "$CHANGED" ]; then run ruff check --output-format=concise $CHANGED 2>&1 | tail -n 60; else echo "no changed files"; fi
+    if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then run ruff check --output-format=concise "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
   else echo "== ruff: configured but not installed"; fi
 else echo "== ruff: not configured"; fi
 echo
@@ -51,7 +52,7 @@ echo
 if [ -f mypy.ini ] || [ -f .mypy.ini ] || has_cfg '\[tool.mypy\]' || has_cfg '\[mypy'; then
   if have mypy; then
     echo "== mypy (changed files)"
-    if [ -n "$CHANGED" ]; then timeout 180 bash -c "$(declare -f run); run mypy $CHANGED" 2>&1 | tail -n 60; else echo "no changed files"; fi
+    if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then timeout 180 bash -c "$(declare -f run); run mypy \"\$@\"" run_mypy "${CHANGED_FILES[@]}" 2>&1 | tail -n 60; else echo "no changed files"; fi
   else echo "== mypy: configured but not installed"; fi
 else echo "== mypy: not configured"; fi
 echo
