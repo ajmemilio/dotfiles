@@ -35,7 +35,6 @@ set scrolloff=10
 set expandtab
 set updatetime=50
 "set timeoutlen=100
-set shell=fish
 set backupskip=/tmp/*,/private/tmp/*
 
 " trigger checktime

@@ -1,24 +1,29 @@
-# my-dotfiles
-My dotfiles
+# dotfiles
 
-## AI (skills + agent instructions)
+Personal machine setup: shell/editor/terminal configs plus a set of
+`installs/*.sh` scripts that install and wire each piece up on a fresh
+machine. Everything is split so you can pull in only what you need.
 
-`ai/` holds [Agent Skills](https://agentskills.io) (`SKILL.md` folders) and an
-`AGENTS.md` with always-on conventions, linked into Claude Code, Codex and other
-tools.
+## Layout
+
+- `.vimrc`, `.vimrc.*`, `.config/nvim/` — Vim/Neovim config and plugins
+- `.tmux.conf`, `.tmux.conf.osx`, `.tmux.powerline.conf` — tmux config
+- `installs/` — one script per tool; run the ones you want on a new machine:
+  - `install_vim.sh` — Vim/Neovim + plugin manager
+  - `install_tmux.sh` — tmux config
+  - `install_git.sh` — git + aliases
+  - `install_sys_apps.sh` — CLI tools (htop, ranger, fzf, ripgrep)
+  - `install_ai.sh` — AI agent skills/instructions, see below
+- `ai/` — portable AI agent skills and always-on instructions, symlinked into
+  Claude Code, Codex, and other tools. See [ai/README.md](ai/README.md) for
+  how it's structured and configured.
+- `.github/workflows/` — CI that validates `ai/` on every change touching it.
+
+## Usage
 
 ```bash
-installs/install_ai.sh --dry-run   # preview
-installs/install_ai.sh             # validate, then symlink
-ai/install.sh --uninstall          # remove only the links it created
+installs/install_<tool>.sh
 ```
 
-- `ai/targets.conf` lists skill **sources** and the tool folders to link into.
-  Work-only skills come from a separate private repo (`~/Workspace/skills`),
-  which is skipped on machines where it isn't cloned.
-- Links are symlinks, so `git pull` updates every tool at once.
-- New skill: `cp -R ai/skills/_template ai/skills/<name>`, set `name:` in
-  its frontmatter, run `installs/install_ai.sh`.
-- claude.ai / Cowork can't read your disk: `ai/scripts/package.sh` builds
-  `ai/dist/<name>.skill` to upload.
-- Keep anything company-specific, secret or PII-bearing **out of this repo**.
+Each script is independent and safe to run on its own; most just copy or
+symlink config files and install the matching package(s).
