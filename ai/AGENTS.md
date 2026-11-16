@@ -4,7 +4,7 @@ Personal conventions loaded into every AI session. Keep it short: workflows
 belong in `skills/`. Company-specific rules live in the private work repo.
 
 ## Python
-- Python 3.11+. Lint/format with `ruff`; type-check with `mypy` where configured.
+- Python 3.12+. Lint/format with `ruff`; type-check with `mypy` where configured.
 - Tests with `pytest`. New behavior ships with a test.
 - Type hints on public functions; `pathlib`; context managers for I/O.
 
